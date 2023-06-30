@@ -1,0 +1,7 @@
+#Log section
+logs:
+  - type: file
+    path: "/var/log/deer-partners/application.log"
+    service: partners-$PROFILE-partners-admin
+    source: java
+    sourcecategory: sourcecode

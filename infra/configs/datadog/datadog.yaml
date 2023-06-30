@@ -1,0 +1,7 @@
+
+## 데이터독에서 로그 서비스만 사용하기 위해 그 외 나머지 호스트 모니터링 관련 기능들은 모두 비활성화합니다.
+enable_payloads:
+  series: false
+  events: false
+  service_checks: false
+  sketches: false
