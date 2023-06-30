@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @Table(name = "company")

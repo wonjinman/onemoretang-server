@@ -1,114 +1,94 @@
 package com.deercorp.blackcompany;
 
 import com.deercorp.blackcompany.common.CommonResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
+@RequiredArgsConstructor
 public class CompanyController {
     private final CompanyRepository companyRepository;
     private final CompanyReviewRepository companyReviewRepository;
 
-    public CompanyController(CompanyRepository companyRepository, CompanyReviewRepository companyReviewRepository) {
-        this.companyRepository = companyRepository;
-        this.companyReviewRepository = companyReviewRepository;
-    }
-
     @GetMapping("/companies")
     public CommonResponse<CompaniesResponse> getAllCompanies(@RequestParam("query") String query) {
-        List<CompanyEntity> companyEntityList = companyRepository.findFirst10ByName(query);
-
+        List<CompanyEntity> companyEntityList = companyRepository.findTop10ByNameContaining(query);
         // 회사 리뷰 가져오기
         List<CompanyResponse> companyResponses = companyEntityList.stream()
-                .map(entity -> {
-                    List<CompanyReviewEntity> companyReviewEntityList = companyReviewRepository.findCompanyReviewByCompanyUuid(entity.getUuid());
-                    double avgRating = calculateAvgRating(companyReviewEntityList);
-                    return new CompanyResponse(
-                            entity.getUuid(),
-                            entity.getName(),
-                            entity.getAddress(),
-                            entity.getRepresentativeName(),
-                            entity.getContact(),
-                            entity.getSubContact(),
-                            entity.getRegion(),
-                            (long) companyReviewEntityList.size(),
-                            avgRating
-                    );
-                }).toList();
-
-
-        return CommonResponse.ok(new CompaniesResponse(
-                companyResponses
-        ));
+            .map(entity -> {
+                List<CompanyReviewEntity> companyReviews = companyReviewRepository.findAllByCompanyUuid(entity.getUuid());
+                return new CompanyResponse(
+                    entity.getUuid(),
+                    entity.getName(),
+                    entity.getAddress(),
+                    entity.getRepresentativeName(),
+                    entity.getContact(),
+                    entity.getSubContact(),
+                    entity.getRegion(),
+                    (long) companyReviews.size(),
+                    getAverageRating(companyReviews)
+                );
+            }).toList();
+        return CommonResponse.ok(new CompaniesResponse(companyResponses));
     }
 
     @GetMapping("/companies/{companyUuid}")
     public CommonResponse<CompanyWithReviewResponse> getCompanyById(@PathVariable String companyUuid) {
-        CompanyEntity companyEntity = companyRepository.findByUuid(companyUuid);
-        List<CompanyReviewEntity> companyReviewEntityList = companyReviewRepository.findCompanyReviewByCompanyUuid(companyUuid);
+        CompanyEntity companyEntity = companyRepository.findByUuid(companyUuid).orElseThrow(IllegalArgumentException::new);
+        List<CompanyReviewEntity> companyReviewEntityList = companyReviewRepository.findAllByCompanyUuid(companyUuid);
         List<CompanyReviewResponse> companyReviewResponseList = companyReviewEntityList.stream()
-                .map(entity ->
-                        new CompanyReviewResponse(
-                                entity.getUuid(),
-                                entity.getContent(),
-                                entity.getRating(),
-                                entity.getCreatedAt(),
-                                entity.getPaymentLeadTime(),
-                                entity.getRegion()
-                        )
-                ).toList();
-
-
-        double avgRating = calculateAvgRating(companyReviewEntityList);
+            .map(entity ->
+                new CompanyReviewResponse(
+                    entity.getUuid(),
+                    entity.getContent(),
+                    entity.getRating(),
+                    entity.getCreatedAt(),
+                    entity.getPaymentLeadTime(),
+                    entity.getRegion()
+                )
+            ).toList();
 
         return CommonResponse.ok(
-                new CompanyWithReviewResponse(
-                        new CompanyResponse(
-                                companyEntity.getUuid(),
-                                companyEntity.getName(),
-                                companyEntity.getAddress(),
-                                companyEntity.getRepresentativeName(),
-                                companyEntity.getContact(),
-                                companyEntity.getSubContact(),
-                                companyEntity.getRegion(),
-                                (long) companyReviewEntityList.size(),
-                                avgRating
-                        ),
-                        companyReviewResponseList
-                )
+            new CompanyWithReviewResponse(
+                companyEntity.getUuid(),
+                companyEntity.getName(),
+                companyEntity.getAddress(),
+                companyEntity.getRepresentativeName(),
+                companyEntity.getContact(),
+                companyEntity.getSubContact(),
+                companyEntity.getRegion(),
+                (long) companyReviewEntityList.size(),
+                getAverageRating(companyReviewEntityList),
+                companyReviewResponseList
+            )
         );
     }
 
     @GetMapping("/reviews/{companyUuid}")
     public List<CompanyReviewEntity> getReviewsById(@PathVariable String companyUuid) {
-        return companyReviewRepository.findCompanyReviewByCompanyUuid(companyUuid);
+        return companyReviewRepository.findAllByCompanyUuid(companyUuid);
     }
 
     @PostMapping("/reviews")
-    public void postReview(@RequestBody PostReviewRequest postReviewRequest) {
+    public void postReview(@RequestHeader("x-device-key") String deviceKey, @RequestBody PostReviewRequest postReviewRequest) {
         CompanyReviewEntity entity = new CompanyReviewEntity(
-                "홍길동",
-                postReviewRequest.getCompanyUuid(),
-                postReviewRequest.getRating(),
-                postReviewRequest.getContent(),
-                postReviewRequest.getPaymentLeadTime(),
-                postReviewRequest.getRegion()
+            deviceKey,
+            postReviewRequest.getCompanyUuid(),
+            postReviewRequest.getRating(),
+            postReviewRequest.getContent(),
+            postReviewRequest.getPaymentLeadTime(),
+            postReviewRequest.getRegion()
         );
-
         companyReviewRepository.save(entity);
     }
 
-    private double calculateAvgRating(List<CompanyReviewEntity> companyReviewEntityList) {
-        double avgRating = 0.0;
-        if (companyReviewEntityList.size() > 0) {
-            avgRating = companyReviewEntityList.stream().mapToDouble(CompanyReviewEntity::getRating).sum() / companyReviewEntityList.size();
-            DecimalFormat decimalFormat = new DecimalFormat("#.#");
-            avgRating = Double.parseDouble(decimalFormat.format(avgRating));
-        }
-        return avgRating;
+    private static double getAverageRating(List<CompanyReviewEntity> companyReviews) {
+        return companyReviews.stream()
+            .mapToDouble(CompanyReviewEntity::getRating)
+            .average()
+            .orElse(0.0);
     }
-
 }
