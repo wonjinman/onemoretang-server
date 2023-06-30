@@ -53,9 +53,9 @@ jobs:
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./${{ github.sha }}.zip s3://${{ inputs.s3_bucket_name }}/${{ inputs.module_name }}/${{ github.sha }}.zip
 
-#      - name: Code Deploy
-#        run: >
-#          aws deploy create-deployment
-#          --application-name deer-partners-${{ inputs.profile }}
-#          --deployment-group-name ${{ inputs.module_name }}
-#          --s3-location bucket=${{ inputs.s3_bucket_name }},bundleType=zip,key=${{ inputs.module_name }}/${{ github.sha }}.zip
+      - name: Code Deploy
+        run: >
+          aws deploy create-deployment
+          --application-name onemoretang
+          --deployment-group-name ${{ inputs.module_name }}
+          --s3-location bucket=${{ inputs.s3_bucket_name }},bundleType=zip,key=${{ inputs.module_name }}/${{ github.sha }}.zip
