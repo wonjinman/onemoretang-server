@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -109,7 +107,6 @@ public class CompanyController {
             avgRating = companyReviewEntityList.stream().mapToDouble(CompanyReviewEntity::getRating).sum() / companyReviewEntityList.size();
             DecimalFormat decimalFormat = new DecimalFormat("#.#");
             avgRating = Double.parseDouble(decimalFormat.format(avgRating));
-
         }
         return avgRating;
     }

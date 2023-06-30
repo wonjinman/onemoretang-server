@@ -1,10 +1,12 @@
 package com.deercorp.blackcompany;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class CompanyWithReviewResponse extends CompanyResponse {
     private List<CompanyReviewResponse> reviews;
 
