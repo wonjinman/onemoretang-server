@@ -1,0 +1,61 @@
+name: deploy
+
+on:
+  workflow_call:
+    inputs:
+      profile:
+        required: true
+        type: string
+      module_name:
+        required: true
+        type: string
+      s3_bucket_name:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: zulu
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: :clean :build
+
+      - name: Generate environment file
+        run: >
+          echo "PROFILE=${{ inputs.profile }}" > ./.env
+
+      - name: Make zip file
+        run: zip -r ./${{ github.sha }}.zip ./
+        shell: bash
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./${{ github.sha }}.zip s3://${{ inputs.s3_bucket_name }}/${{ inputs.module_name }}/${{ github.sha }}.zip
+
+#      - name: Code Deploy
+#        run: >
+#          aws deploy create-deployment
+#          --application-name deer-partners-${{ inputs.profile }}
+#          --deployment-group-name ${{ inputs.module_name }}
+#          --s3-location bucket=${{ inputs.s3_bucket_name }},bundleType=zip,key=${{ inputs.module_name }}/${{ github.sha }}.zip
