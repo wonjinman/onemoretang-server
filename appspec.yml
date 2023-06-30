@@ -13,9 +13,9 @@ permissions:
 
 hooks:
   AfterInstall:
-#    - location: infra/scripts/copy_nginx_config.sh
-#      timeout: 120
-#      runas: root
+    - location: infra/scripts/copy_nginx_config.sh
+      timeout: 120
+      runas: root
 #    - location: infra/scripts/install_datadog_agent.sh
 #      timeout: 120
 #      runas: root
