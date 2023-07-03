@@ -1,6 +1,11 @@
-package com.deercorp.blackcompany;
+package com.deercorp.blackcompany.company;
 
 import com.deercorp.blackcompany.common.CommonResponse;
+import com.deercorp.blackcompany.review.PostReviewRequest;
+import com.deercorp.blackcompany.review.CompanyReviewEntity;
+import com.deercorp.blackcompany.review.CompanyReviewRepository;
+import com.deercorp.blackcompany.review.CompanyReviewResponse;
+import com.deercorp.blackcompany.review.CompanyWithReviewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

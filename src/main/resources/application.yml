@@ -1,3 +1,34 @@
+---
+spring.config.activate.on-profile: local
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./demodb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_log: true
+        format_sql: true
+        use_sql_comments: true
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type.descriptor.sql.BasicBinder: TRACE
+
+---
+spring.config.activate.on-profile: prod
+
 spring:
   datasource:
     url: jdbc:mysql://blackcompany.cluster-c9x3sfpfdv0d.ap-northeast-2.rds.amazonaws.com:3306/blackcompany

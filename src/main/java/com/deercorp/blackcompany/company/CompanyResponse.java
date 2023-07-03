@@ -1,4 +1,4 @@
-package com.deercorp.blackcompany;
+package com.deercorp.blackcompany.company;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

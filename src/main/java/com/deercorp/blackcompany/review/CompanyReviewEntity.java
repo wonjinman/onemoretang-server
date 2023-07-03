@@ -1,4 +1,4 @@
-package com.deercorp.blackcompany;
+package com.deercorp.blackcompany.review;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
