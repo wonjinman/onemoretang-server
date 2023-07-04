@@ -17,4 +17,8 @@ public class CommonResponse<T> {
     public static <T> CommonResponse<T> ok(T data) {
         return new CommonResponse<>("SUCCESS", "성공", data);
     }
+
+    public static <T> CommonResponse<T> error() {
+        return new CommonResponse<>("ERROR", "실패", null);
+    }
 }
