@@ -17,7 +17,7 @@ fi
 echo "> start new application"
 
 nohup java -jar \
--Xmx512mb \
+-Xmx512m \
 -Dspring.profiles.active="$PROFILE" \
 -Dserver.port="$NEW_PORT" \
 /home/ec2-user/build/libs/blackcompany-*-SNAPSHOT.jar > /dev/null 2>&1 &
