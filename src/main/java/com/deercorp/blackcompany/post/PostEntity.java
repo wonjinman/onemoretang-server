@@ -3,6 +3,7 @@ package com.deercorp.blackcompany.post;
 import com.deercorp.blackcompany.BaseDateEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class PostEntity extends BaseDateEntity {
     @Column(length = 1500)
     private String content;
     private String createdBy;
+    @Setter
     private LocalDateTime deletedAt;
 
     public PostEntity(String title, String content, String createdBy) {

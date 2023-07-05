@@ -9,4 +9,5 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     List<CompanyEntity> findTop10ByNameContaining(String query);
 
     Optional<CompanyEntity> findByUuid(String companyUuid);
+
 }

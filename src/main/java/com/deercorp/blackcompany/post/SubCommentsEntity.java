@@ -3,6 +3,7 @@ package com.deercorp.blackcompany.post;
 import com.deercorp.blackcompany.BaseDateEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class SubCommentsEntity extends BaseDateEntity {
     @Column(length = 1000)
     private String content;
     private String createdBy;
+    @Setter
     private LocalDateTime deletedAt;
     @ManyToOne
     private CommentEntity comment;
