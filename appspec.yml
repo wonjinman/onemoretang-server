@@ -13,22 +13,10 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: infra/scripts/copy_nginx_config.sh
+    - location: infra/scripts/setup_nginx.sh
       timeout: 120
       runas: root
-#    - location: infra/scripts/install_datadog_agent.sh
-#      timeout: 120
-#      runas: root
   ApplicationStart:
-    - location: infra/scripts/run_new_was.sh
+    - location: infra/scripts/start_application.sh
       timeout: 120
       runas: ec2-user
-#    - location: infra/scripts/health_check.sh
-#      timeout: 120
-#      runas: ec2-user
-#    - location: infra/scripts/switch.sh
-#      timeout: 120
-#      runas: ec2-user
-#    - location: infra/scripts/stop_old_was.sh
-#      timeout: 120
-#      runas: ec2-user
