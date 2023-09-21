@@ -9,5 +9,5 @@ jobs:
     with:
       profile: prod
       module_name: onemoretang-server
-      s3_bucket_name: onemoretang-codedeploy-artifacts
+      s3_bucket_name: onemoretang-codedeploy-resources
     secrets: inherit
