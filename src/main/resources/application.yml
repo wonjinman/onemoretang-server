@@ -31,9 +31,9 @@ spring.config.activate.on-profile: prod
 
 spring:
   datasource:
-    url: jdbc:mysql://onemoretang.cluster-c9x3sfpfdv0d.ap-northeast-2.rds.amazonaws.com:3306/onemoretang
+    url: jdbc:mysql://onemoretang.cluster-cf0xfzqncrkl.ap-northeast-2.rds.amazonaws.com:3306/onemoretang
     username: admin
-    password: lSK02ZKxjSG3zi3koNXh
+    password: djJej7GpghI56iWFixcS
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
